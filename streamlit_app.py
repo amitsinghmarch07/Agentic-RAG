@@ -23,6 +23,8 @@ if "vector_store" not in st.session_state:
     st.session_state.vector_store = None
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
+if "pdfs_loaded" not in st.session_state:
+    st.session_state.pdfs_loaded = False
 
 # PDFs to load
 pdf_urls = {
@@ -33,53 +35,56 @@ pdf_urls = {
     "ELECTRA": "https://arxiv.org/pdf/1910.10683.pdf",
 }
 
-# Sidebar - Setup
-with st.sidebar:
-    st.header("⚙️ Setup")
-    
-    if st.button("🔄 Load & Index PDFs"):
-        with st.spinner("Loading PDFs... This may take 2-3 minutes"):
-            all_documents = []
+# AUTO-LOAD PDFs ON STARTUP
+if not st.session_state.pdfs_loaded:
+    with st.spinner("🔄 Loading and indexing PDFs... This may take 2-3 minutes"):
+        all_documents = []
+        
+        # Download and load PDFs
+        for pdf_name, pdf_url in pdf_urls.items():
+            pdf_file = pdf_name.replace(" ", "_") + ".pdf"
             
-            # Download and load PDFs
-            for pdf_name, pdf_url in pdf_urls.items():
-                pdf_file = pdf_name.replace(" ", "_") + ".pdf"
-                
-                if not Path(pdf_file).exists():
-                    try:
-                        response = requests.get(pdf_url, timeout=30)
-                        with open(pdf_file, "wb") as f:
-                            f.write(response.content)
-                        st.write(f"✓ Downloaded {pdf_name}")
-                    except Exception as e:
-                        st.error(f"Error downloading {pdf_name}: {e}")
-                        continue
-                
+            if not Path(pdf_file).exists():
                 try:
-                    loader = PyPDFLoader(pdf_file)
-                    documents = loader.load()
-                    all_documents.extend(documents)
-                    st.write(f"✓ Loaded {pdf_name} ({len(documents)} pages)")
+                    response = requests.get(pdf_url, timeout=30)
+                    with open(pdf_file, "wb") as f:
+                        f.write(response.content)
                 except Exception as e:
-                    st.error(f"Error loading {pdf_name}: {e}")
+                    st.error(f"Error downloading {pdf_name}: {e}")
+                    continue
             
-            if all_documents:
-                # Split documents
-                st.write("Splitting documents into chunks...")
-                text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-                docs = text_splitter.split_documents(all_documents)
-                st.write(f"✓ Created {len(docs)} chunks")
-                
-                # Create embeddings
-                st.write("Creating embeddings...")
-                embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-                st.session_state.vector_store = FAISS.from_documents(docs, embeddings)
-                st.success("✓ Vector store ready! You can now ask questions.")
+            try:
+                loader = PyPDFLoader(pdf_file)
+                documents = loader.load()
+                all_documents.extend(documents)
+            except Exception as e:
+                st.error(f"Error loading {pdf_name}: {e}")
+        
+        if all_documents:
+            # Split documents
+            text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+            docs = text_splitter.split_documents(all_documents)
+            
+            # Create embeddings
+            embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+            st.session_state.vector_store = FAISS.from_documents(docs, embeddings)
+            st.session_state.pdfs_loaded = True
+            st.success("✓ PDFs ready! You can now ask questions.")
+        else:
+            st.error("No PDFs were loaded. Please check your internet connection.")
+
+# Sidebar - Info
+with st.sidebar:
+    st.header("ℹ️ Info")
     
-    if st.session_state.vector_store is None:
-        st.warning("⚠️ Click 'Load & Index PDFs' to start")
+    if st.session_state.pdfs_loaded:
+        st.success("✓ PDFs Loaded and Ready")
+        st.markdown("---")
+        st.subheader("📚 Loaded Papers:")
+        for paper in pdf_urls.keys():
+            st.write(f"• {paper}")
     else:
-        st.success("✓ PDFs loaded and indexed!")
+        st.warning("Loading PDFs...")
     
     # Chat history
     if st.session_state.chat_history:
@@ -90,7 +95,7 @@ with st.sidebar:
             st.rerun()
 
 # Main content
-if st.session_state.vector_store is not None:
+if st.session_state.pdfs_loaded and st.session_state.vector_store is not None:
     # Question input
     query = st.text_input("🔍 Ask a question about the papers:")
     
@@ -144,4 +149,4 @@ Answer:"""
                 st.write(chat['answer'])
 
 else:
-    st.info("👈 Click 'Load & Index PDFs' in the sidebar to get started!")
+    st.info("� PDFs are loading... This may take 2-3 minutes on first run. Please refresh the page if it takes too long.")
