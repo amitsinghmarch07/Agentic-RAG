@@ -19,13 +19,9 @@ A web-based AI application that allows users to ask questions about multiple res
 
 ### Setup (One Command!)
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/amitsinghmarch07/Agentic-RAG.git
-   cd Agentic-RAG
-   ```
+1. **Extract the zip file** to your desired location
 
-2. **Run the application**
+2. **Navigate to the folder** and run:
    ```bash
    bash run.sh
    ```
