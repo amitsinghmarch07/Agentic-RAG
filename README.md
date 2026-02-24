@@ -41,6 +41,11 @@ A web-based AI application that allows users to ask questions about multiple res
 
 **Simple way - Execute the startup script (Recommended):**
 ```bash
+bash run.sh
+```
+
+Or alternatively:
+```bash
 ./run.sh
 ```
 
