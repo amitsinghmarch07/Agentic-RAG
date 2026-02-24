@@ -19,12 +19,10 @@ A web-based AI application that allows users to ask questions about multiple res
 
 ### Setup (One Command!)
 
-1. **Extract the zip file** to your desired location
-
-2. **Navigate to the folder** and run:
-   ```bash
-   bash run.sh
-   ```
+Navigate to the extracted folder and run:
+```bash
+bash run.sh
+```
 
 That's it! The script will:
 - ✓ Create virtual environment (if needed)
