@@ -15,9 +15,9 @@ A web-based AI application that allows users to ask questions about multiple res
 
 ### Prerequisites
 - Python 3.11+
-- [Ollama](https://ollama.ai) installed and running (for local LLM)
+- [Ollama](https://ollama.ai) installed (the script will start it automatically)
 
-### Setup (One-Time)
+### Setup (One Command!)
 
 1. **Clone the repository**
    ```bash
@@ -25,45 +25,36 @@ A web-based AI application that allows users to ask questions about multiple res
    cd Agentic-RAG
    ```
 
-2. **Install Ollama** (if not already installed)
-   - Download from [ollama.ai](https://ollama.ai)
-   - Start Ollama: `ollama serve` (in a separate terminal)
-   - Pull the model: `ollama pull mistral`
-
-3. **Install dependencies**
+2. **Run the application**
    ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   pip install -r requirements.txt
+   bash run.sh
    ```
 
-### Run the Application
-
-**Simple way - Execute the startup script (Recommended):**
-```bash
-bash run.sh
-```
-
-Or alternatively:
-```bash
-./run.sh
-```
-
-This will:
-- ✓ Check if Ollama is running
-- ✓ Start Ollama automatically if needed
-- ✓ Activate the virtual environment
+That's it! The script will:
+- ✓ Create virtual environment (if needed)
+- ✓ Install all dependencies
+- ✓ Start Ollama server
 - ✓ Launch the Streamlit app
 
 The app will open automatically at `http://localhost:8501`
 
-**Or manual way:**
+### Run the Application
+
+**Simply execute (handles everything automatically):**
 ```bash
-source venv/bin/activate
-streamlit run streamlit_app.py
+bash run.sh
 ```
 
-(Make sure Ollama is running separately with `ollama serve`)
+Or:
+```bash
+./run.sh
+```
+
+The script automatically:
+- ✓ Creates/activates virtual environment
+- ✓ Installs all dependencies  
+- ✓ Starts Ollama server
+- ✓ Launches the Streamlit app at http://localhost:8501
 
 ## 📖 How to Use
 
