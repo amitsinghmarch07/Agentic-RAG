@@ -39,10 +39,18 @@ A web-based AI application that allows users to ask questions about multiple res
 
 ### Run the Application
 
-**Simple way - Execute the startup script:**
+**Simple way - Execute the startup script (Recommended):**
 ```bash
 ./run.sh
 ```
+
+This will:
+- ✓ Check if Ollama is running
+- ✓ Start Ollama automatically if needed
+- ✓ Activate the virtual environment
+- ✓ Launch the Streamlit app
+
+The app will open automatically at `http://localhost:8501`
 
 **Or manual way:**
 ```bash
@@ -50,7 +58,7 @@ source venv/bin/activate
 streamlit run streamlit_app.py
 ```
 
-The app will open automatically at `http://localhost:8501`
+(Make sure Ollama is running separately with `ollama serve`)
 
 ## 📖 How to Use
 
